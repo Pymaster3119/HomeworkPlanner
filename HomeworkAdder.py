@@ -42,8 +42,8 @@ Entry(root, textvariable=difficulty).pack()
 #Create Assignment
 def saveAssignments():
     assignmentlist = []
-    # with open("assignmentslist", "rb") as listfile:
-    #     assignmentlist = pickle.load(listfile)
+    with open("assignmentslist", "rb") as listfile:
+        assignmentlist = pickle.load(listfile)
     assignmentlist.append(Main.Assignment(startdate, enddate, workunits, difficulty, name, subject))
     with open("assignmentslist", "wb") as listfile:
         pickle.dump(assignmentlist, listfile)

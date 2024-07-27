@@ -58,7 +58,6 @@ class callendarObject():
         self.assignments.append(assignment)
     def detailedview(self):
         top = Toplevel(root)
-        top.geometry("500x1000")
         top.title("Detailed View")
         DetailedView.detailedview(top, self)
 

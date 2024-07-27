@@ -28,6 +28,15 @@ with open("assignmentslist", "rb") as listfile:
 with open("assignmentslist", "wb") as listfile:
     pickle.dump(assignmentlist, listfile)
 
+#Create colors for each class
+colors = {}
+colorindex = 0
+for assignment in assignmentlist:
+    if not assignment.subject in colors.keys():
+        colors[assignment.subject] = Main.COLORS[colorindex]
+        colorindex += 1
+
+print(colors)
 
 #Create the callendar basic UI
 class callendarObject():
@@ -37,7 +46,13 @@ class callendarObject():
         weekday = date.weekday()
         firstweekday, firstdayofmonth = calendar.monthrange(date.year, date.month)
         self.frame.grid(row = math.floor((date.day + firstweekday - 1) / 7) + 1, column = weekday)
+        self.canvas = Canvas(self.frame, width=60, height=60)
+        self.canvas.grid(row=0, column=1)
+        self.classes = []
         Label(self.frame, text=self.date.date().day).grid(row=0, column=0)
+
+    def add(self, assignment):
+        self.canvas.create_rectangle(0, len(self.classes) * 10, 60, len(self.classes) * 10 + 5, fill = colors[assignment.subject])
 callendarFrame = Frame(root)
 callendarFrame.pack()
 def createcallendar(year, month):
@@ -51,6 +66,13 @@ def createcallendar(year, month):
     for i in range(numdays):
         date = datetime.datetime(date.year, date.month, i + 1)
         callendarObject(callendarFrame, date)
+
+#Add assignments
+for assignment in assignmentlist:
+    print(assignment.startdate)
+    print(type(assignment.startdate))
+    for date in Main.get_dates_between(assignment.startdate, assignment.enddate):
+        print(date)
 
 #Create the callendar date selection framework
 createcallendar(today.year, today.month)

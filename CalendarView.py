@@ -7,6 +7,7 @@ import Main
 import re
 import calendar
 import math
+import DetailedView
 root = Tk()
 
 # Clean up the assignments
@@ -38,7 +39,7 @@ for assignment in assignmentlist:
 
 print(colors)
 
-#Create the callendar basic UI
+#Create the callendar basic UI object
 class callendarObject():
     def __init__(self, parent, date):
         self.frame = Frame(parent)
@@ -47,14 +48,24 @@ class callendarObject():
         firstweekday, firstdayofmonth = calendar.monthrange(date.year, date.month)
         self.frame.grid(row = math.floor((date.day + firstweekday - 1) / 7) + 1, column = weekday)
         self.canvas = Canvas(self.frame, width=60, height=60)
-        self.canvas.grid(row=0, column=1)
-        self.classes = []
+        self.canvas.grid(row=1, column=0)
+        self.assignments = []
         Label(self.frame, text=self.date.date().day).grid(row=0, column=0)
+        Button(self.frame, text = "View", command= self.detailedview).grid(row=2, column=0)
 
     def add(self, assignment):
-        self.canvas.create_rectangle(0, len(self.classes) * 10, 60, len(self.classes) * 10 + 5, fill = colors[assignment.subject])
+        self.canvas.create_rectangle(0, len(self.assignments) * 10, 60, len(self.assignments) * 10 + 5, fill = colors[assignment.subject])
+        self.assignments.append(assignment)
+    def detailedview(self):
+        top = Toplevel(root)
+        top.geometry("500x1000")
+        top.title("Detailed View")
+        DetailedView.detailedview(top, self)
+
+#Create the callendar objects
 callendarFrame = Frame(root)
 callendarFrame.pack()
+callendarobjects = []
 def createcallendar(year, month):
     global callendarFrame
     for child in callendarFrame.winfo_children():
@@ -65,14 +76,14 @@ def createcallendar(year, month):
         Label(callendarFrame, text=i).grid(row=0, column=["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].index(i))
     for i in range(numdays):
         date = datetime.datetime(date.year, date.month, i + 1)
-        callendarObject(callendarFrame, date)
+        callendarobjects.append(callendarObject(callendarFrame, date))
 
-#Add assignments
-for assignment in assignmentlist:
-    print(assignment.startdate)
-    print(type(assignment.startdate))
-    for date in Main.get_dates_between(assignment.startdate, assignment.enddate):
-        print(date)
+    #Add assignments
+    for assignment in assignmentlist:
+        for date in Main.get_dates_between(assignment.startdate, assignment.enddate):
+            if date.year == year and date.month == month:
+                callendarobjects[date.day - 1].add(assignment)
+            
 
 #Create the callendar date selection framework
 createcallendar(today.year, today.month)

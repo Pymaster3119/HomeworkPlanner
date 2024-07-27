@@ -39,12 +39,17 @@ Label(root, text='On a scale of 1-10, how difficult is the assignment?:').pack()
 difficulty = StringVar()
 Entry(root, textvariable=difficulty).pack()
 
+#Time
+Label(root, text='How long do you think this will take?:').pack()
+time = StringVar()
+Entry(root, textvariable=time).pack()
+
 #Create Assignment
 def saveAssignments():
     assignmentlist = []
     with open("assignmentslist", "rb") as listfile:
         assignmentlist = pickle.load(listfile)
-    assignmentlist.append(Main.Assignment(startdate, enddate, workunits, difficulty, name, subject))
+    assignmentlist.append(Main.Assignment(startdate, enddate, workunits, difficulty, name, subject, time))
     with open("assignmentslist", "wb") as listfile:
         pickle.dump(assignmentlist, listfile)
     messagebox.showinfo(message="Assignment posted!")

@@ -3,44 +3,48 @@ import tkinter as tk
 from tkinter import ttk
 
 class Assignment():
-    def __init__(self, startdate, enddate, workunits, difficulty, name, subject):
+    def __init__(self, startdate, enddate, workunits, difficulty, name, subject, time):
         self.startdate = startdate.get_date()
         self.enddate = enddate.get_date()
         self.assignmentsize = int(workunits.get())
         self.difficulty = int(difficulty.get())
         self.name = name.get()
         self.subject = subject.get()
+        self.time = time.get()
 
 # HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP HELP 
 class ScrollableFrame(ttk.Frame):
     def __init__(self, container, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
         
-        canvas = tk.Canvas(self)
-        scrollbar = ttk.Scrollbar(self, orient="vertical", command=canvas.yview)
-        self.scrollable_frame = ttk.Frame(canvas)
+        self.canvas = tk.Canvas(self)
+        scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
+        self.scrollable_frame = ttk.Frame(self.canvas)
         
         self.scrollable_frame.bind(
             "<Configure>",
-            lambda e: canvas.configure(
-                scrollregion=canvas.bbox("all")
+            lambda e: self.canvas.configure(
+                scrollregion=self.canvas.bbox("all")
             )
         )
         
-        self.canvas_window = canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
+        self.canvas_window = self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
 
-        canvas.configure(yscrollcommand=scrollbar.set)
+        self.canvas.configure(yscrollcommand=scrollbar.set)
         
-        canvas.pack(side="left", fill="both", expand=True)
+        self.canvas.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
 
-        # Ensure the scrollable frame expands to fill the canvas width
-        self.scrollable_frame.bind("<Configure>", self.on_frame_configure)
+        self.scrollable_frame.bind("<Configure>", self._on_frame_configure)
+        self.canvas.bind('<Configure>', self._on_canvas_configure)
 
-    def on_frame_configure(self, event):
-        # Update the canvas width to match the width of the scrollable frame
-        canvas_width = event.width
-        self.canvas.itemconfig(self.canvas_window, width=canvas_width)
+    def _on_frame_configure(self, event):
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+        self.canvas.itemconfig(self.canvas_window, width=self.scrollable_frame.winfo_reqwidth())
+
+    def _on_canvas_configure(self, event):
+        if self.scrollable_frame.winfo_reqwidth() != self.canvas.winfo_width():
+            self.canvas.itemconfig(self.canvas_window, width=self.canvas.winfo_width())
 COLORS = [
     "#FF0000",  # Red
     "#00FF00",  # Green

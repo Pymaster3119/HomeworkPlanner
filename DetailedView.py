@@ -13,6 +13,7 @@ import math
 import tkinter as tk
 from tkinter import ttk
 from datetime import datetime
+import ConfigEditor
 
 def detailedview(top, widget):
     frame = ttk.Frame(top)
@@ -53,7 +54,9 @@ def detailedview(top, widget):
         for col in range(4):
             tempframe.grid_columnconfigure(col, weight=1)
 
-    
+    #Create schedule
+    workperiods, breakperiods, starttimes = ConfigEditor.load()
+    timeline = createSchedule(widget.assignments, widget.commitments, breakperiods, workperiods)
 
     #Display schedule
     tk.Label(frame, text="Schedule:").grid (row=5,column=0)
@@ -61,8 +64,7 @@ def detailedview(top, widget):
     scheduleframes.grid(row=6, column=0, sticky="nsew")
     scheduleframes.scrollable_frame.grid_rowconfigure(0, weight=1)
     scheduleframes.scrollable_frame.grid_columnconfigure(0, weight=1)
-    currenttime = 180
-    timeline = createSchedule(widget.assignments, widget.commitments)
+    currenttime = starttimes[widget.date.weekday()]
     for idx,i in enumerate(timeline):
         tempframe = ttk.Frame(scheduleframes.scrollable_frame)
         tempframe.grid(row=idx, column=0, padx = 10, pady=5, sticky="ew")
@@ -79,7 +81,7 @@ def detailedview(top, widget):
             tk.Label(tempframe,text=i[0].reason).grid(row=0, column=3, padx=5, pady=5, sticky="ew")
             tk.Label(tempframe,text=i[0].duration).grid(row=0, column=4, padx=5, pady=5, sticky="ew")
         
-def createSchedule(assignments, commitments, breaktime = 15, workperiods = 30):
+def createSchedule(assignments, commitments, breaktime = 15, workperiods = 30, daystart = 180):
     #Create schedule
     timeline = []
     totaltime = 0
@@ -92,8 +94,7 @@ def createSchedule(assignments, commitments, breaktime = 15, workperiods = 30):
         while timeonassignment < math.ceil(int(assignment.time)/numdays):
             interruptingCommitment = None
             for commitment in commitments:
-                print(commitment.starttime)
-                if totaltime >= int(commitment.starttime) and totaltime <= int(commitment.starttime) + int(commitment.duration):
+                if totaltime >= int(commitment.starttime-daystart) and totaltime <= int(commitment.starttime-daystart) + int(commitment.duration):
                     interruptingCommitment = commitment
             
             if interruptingCommitment != None:
@@ -108,3 +109,4 @@ def createSchedule(assignments, commitments, breaktime = 15, workperiods = 30):
                 timeline.append(("break", breaktime))
                 timeonassignment += workperiods
                 totaltime += workperiods
+    return timeline

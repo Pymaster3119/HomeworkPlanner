@@ -53,35 +53,7 @@ def detailedview(top, widget):
         for col in range(4):
             tempframe.grid_columnconfigure(col, weight=1)
 
-    #Create schedule
-    breaktime = 15
-    timeline = []
-    workperiods = 30
-    totaltime = 0
-    #Working from hardest to easiest so that workload becomes easier as time goes on
-    sorted_assignments = sorted(widget.assignments, key=lambda x: x.difficulty, reverse=True)
-    for assignment in sorted_assignments:
-        numdays = datetime.strptime(assignment.enddate, "%m/%d/%y").date() - datetime.strptime(assignment.startdate, "%m/%d/%y").date()
-        numdays = numdays.days
-        timeonassignment = 0
-        while timeonassignment < math.ceil(int(assignment.time)/numdays):
-            interruptingCommitment = None
-            for commitment in widget.commitments:
-                print(commitment.starttime)
-                if totaltime >= int(commitment.starttime) and totaltime <= int(commitment.starttime) + int(commitment.duration):
-                    interruptingCommitment = commitment
-            
-            if interruptingCommitment != None:
-                timeline.append((assignment, totaltime - interruptingCommitment.starttime))
-                timeline.append((interruptingCommitment, interruptingCommitment.duration))
-                timeline.append((assignment, workperiods - (totaltime - interruptingCommitment.starttime)))
-                timeonassignment += workperiods
-                totaltime += workperiods + interruptingCommitment.duration
-            else:
-                timeline.append((assignment, workperiods))
-                timeline.append(("break", breaktime))
-                timeonassignment += workperiods
-                totaltime += workperiods
+    
 
     #Display schedule
     tk.Label(frame, text="Schedule:").grid (row=5,column=0)
@@ -90,6 +62,7 @@ def detailedview(top, widget):
     scheduleframes.scrollable_frame.grid_rowconfigure(0, weight=1)
     scheduleframes.scrollable_frame.grid_columnconfigure(0, weight=1)
     currenttime = 180
+    timeline = createSchedule(widget.assignments, widget.commitments)
     for idx,i in enumerate(timeline):
         tempframe = ttk.Frame(scheduleframes.scrollable_frame)
         tempframe.grid(row=idx, column=0, padx = 10, pady=5, sticky="ew")
@@ -106,3 +79,32 @@ def detailedview(top, widget):
             tk.Label(tempframe,text=i[0].reason).grid(row=0, column=3, padx=5, pady=5, sticky="ew")
             tk.Label(tempframe,text=i[0].duration).grid(row=0, column=4, padx=5, pady=5, sticky="ew")
         
+def createSchedule(assignments, commitments, breaktime = 15, workperiods = 30):
+    #Create schedule
+    timeline = []
+    totaltime = 0
+    #Working from hardest to easiest so that workload becomes easier as time goes on
+    sorted_assignments = sorted(assignments, key=lambda x: x.difficulty, reverse=True)
+    for assignment in sorted_assignments:
+        numdays = datetime.strptime(assignment.enddate, "%m/%d/%y").date() - datetime.strptime(assignment.startdate, "%m/%d/%y").date()
+        numdays = numdays.days
+        timeonassignment = 0
+        while timeonassignment < math.ceil(int(assignment.time)/numdays):
+            interruptingCommitment = None
+            for commitment in commitments:
+                print(commitment.starttime)
+                if totaltime >= int(commitment.starttime) and totaltime <= int(commitment.starttime) + int(commitment.duration):
+                    interruptingCommitment = commitment
+            
+            if interruptingCommitment != None:
+                if not totaltime - interruptingCommitment.starttime == 0:
+                    timeline.append((assignment, totaltime - interruptingCommitment.starttime))
+                timeline.append((interruptingCommitment, interruptingCommitment.duration))
+                timeline.append((assignment, workperiods - (totaltime - interruptingCommitment.starttime)))
+                timeonassignment += workperiods
+                totaltime += workperiods + interruptingCommitment.duration
+            else:
+                timeline.append((assignment, workperiods))
+                timeline.append(("break", breaktime))
+                timeonassignment += workperiods
+                totaltime += workperiods

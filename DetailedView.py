@@ -36,6 +36,23 @@ def detailedview(top, widget):
         tk.Label(tempframe, text="Size: " + str(assignment.assignmentsize)).grid(row=0, column=3, padx=5, pady=5, sticky="ew")
         for col in range(4):
             tempframe.grid_columnconfigure(col, weight=1)
+
+    #Create Commitments
+    tk.Label(frame, text="Commitments:").grid(row=3, column=0, sticky="ew")
+    commitmentframes = Main.ScrollableFrame(frame)
+    commitmentframes.grid(row=4, column=0, sticky="nsew")
+    commitmentframes.scrollable_frame.grid_rowconfigure(0, weight=1)
+    commitmentframes.scrollable_frame.grid_columnconfigure(0, weight=1)
+    for idx, commitment in enumerate(widget.commitments):
+        tempframe = ttk.Frame(commitmentframes.scrollable_frame)
+        tempframe.grid(row=idx, column=0, padx=10, pady=5, sticky="ew")
+        tk.Label(tempframe, text="Name: " + commitment.name).grid(row=0, column=0, padx=5, pady=5, sticky="ew")
+        tk.Label(tempframe, text="Reason: " + commitment.reason).grid(row=0, column=1, padx=5, pady=5, sticky="ew")
+        tk.Label(tempframe, text="Starttime: " + str(commitment.starttime)).grid(row=0, column=2, padx=5, pady=5, sticky="ew")
+        tk.Label(tempframe, text="Duration: " + str(commitment.duration)).grid(row=0, column=3, padx=5, pady=5, sticky="ew")
+        for col in range(4):
+            tempframe.grid_columnconfigure(col, weight=1)
+
     #Create schedule
     breaktime = 15
     timeline = []
@@ -45,14 +62,16 @@ def detailedview(top, widget):
     for assignment in sorted_assignments:
         numdays = datetime.strptime(assignment.enddate, "%m/%d/%y").date() - datetime.strptime(assignment.startdate, "%m/%d/%y").date()
         numdays = numdays.days
-        for i in range(math.ceil(int(assignment.time)/numdays/30)):
+        timeonassignment = 0
+        while timeonassignment < math.ceil(int(assignment.time)/numdays):
             timeline.append((assignment, workperiods))
             timeline.append(("break", breaktime))
+            timeonassignment += workperiods
 
     #Display schedule
-    tk.Label(frame, text="Schedule:").grid (row=3,column=0)
+    tk.Label(frame, text="Schedule:").grid (row=5,column=0)
     scheduleframes = Main.ScrollableFrame(frame)
-    scheduleframes.grid(row=4, column=0, sticky="nsew")
+    scheduleframes.grid(row=6, column=0, sticky="nsew")
     scheduleframes.scrollable_frame.grid_rowconfigure(0, weight=1)
     scheduleframes.scrollable_frame.grid_columnconfigure(0, weight=1)
     currenttime = 180

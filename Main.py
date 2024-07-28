@@ -4,9 +4,13 @@ from tkinter import ttk
 import pickle
 
 class Assignment():
-    def __init__(self, startdate, enddate, workunits, difficulty, name, subject, time):
-        self.startdate = startdate.get_date()
-        self.enddate = enddate.get_date()
+    def __init__(self, startdate, enddate, workunits, difficulty, name, subject, time, bypass = False):
+        if not bypass:
+            self.startdate = startdate.get_date()
+            self.enddate = enddate.get_date()
+        else:
+            self.startdate = startdate
+            self.enddate = enddate
         self.assignmentsize = int(workunits.get())
         self.difficulty = int(difficulty.get())
         self.name = name.get()
@@ -29,7 +33,7 @@ class ScrollableFrame(ttk.Frame):
     def __init__(self, container, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
         
-        self.canvas = tk.Canvas(self)
+        self.canvas = tk.Canvas(self, width = 1500)
         scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
         self.scrollable_frame = ttk.Frame(self.canvas)
         

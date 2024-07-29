@@ -35,6 +35,7 @@ def detailedview(top, widget):
         tk.Label(tempframe, text="Class: " + assignment.subject).grid(row=0, column=1, padx=5, pady=5, sticky="ew")
         tk.Label(tempframe, text="Difficulty: " + str(assignment.difficulty)).grid(row=0, column=2, padx=5, pady=5, sticky="ew")
         tk.Label(tempframe, text="Size: " + str(assignment.assignmentsize)).grid(row=0, column=3, padx=5, pady=5, sticky="ew")
+        tk.Label(tempframe, text="Units: " + str(assignment.assignmentunits/(datetime.strptime(assignment.enddate, "%m/%d/%y").date() - datetime.strptime(assignment.startdate, "%m/%d/%y").date()).days)).grid(row=0, column=4, padx=5, pady=5, sticky="ew")
         for col in range(4):
             tempframe.grid_columnconfigure(col, weight=1)
 

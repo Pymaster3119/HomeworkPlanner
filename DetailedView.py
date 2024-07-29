@@ -26,10 +26,10 @@ def detailedview(top, widget):
     #Create assignments
     assignmentframes = Main.ScrollableFrame(frame)
     assignmentframes.grid(row=2, column=0, sticky="nsew")
-    assignmentframes.scrollable_frame.grid_rowconfigure(0, weight=1)
-    assignmentframes.scrollable_frame.grid_columnconfigure(0, weight=1)
+    assignmentframes.grid_rowconfigure(0, weight=1)
+    assignmentframes.grid_columnconfigure(0, weight=1)
     for idx, assignment in enumerate(widget.assignments):
-        tempframe = ttk.Frame(assignmentframes.scrollable_frame)
+        tempframe = ttk.Frame(assignmentframes)
         tempframe.grid(row=idx, column=0, padx=10, pady=5, sticky="ew")
         tk.Label(tempframe, text="Name: " + assignment.name).grid(row=0, column=0, padx=5, pady=5, sticky="ew")
         tk.Label(tempframe, text="Class: " + assignment.subject).grid(row=0, column=1, padx=5, pady=5, sticky="ew")
@@ -42,10 +42,10 @@ def detailedview(top, widget):
     tk.Label(frame, text="Commitments:").grid(row=3, column=0, sticky="ew")
     commitmentframes = Main.ScrollableFrame(frame)
     commitmentframes.grid(row=4, column=0, sticky="nsew")
-    commitmentframes.scrollable_frame.grid_rowconfigure(0, weight=1)
-    commitmentframes.scrollable_frame.grid_columnconfigure(0, weight=1)
+    commitmentframes.grid_rowconfigure(0, weight=1)
+    commitmentframes.grid_columnconfigure(0, weight=1)
     for idx, commitment in enumerate(widget.commitments):
-        tempframe = ttk.Frame(commitmentframes.scrollable_frame)
+        tempframe = ttk.Frame(commitmentframes)
         tempframe.grid(row=idx, column=0, padx=10, pady=5, sticky="ew")
         tk.Label(tempframe, text="Name: " + commitment.name).grid(row=0, column=0, padx=5, pady=5, sticky="ew")
         tk.Label(tempframe, text="Reason: " + commitment.reason).grid(row=0, column=1, padx=5, pady=5, sticky="ew")
@@ -62,11 +62,11 @@ def detailedview(top, widget):
     tk.Label(frame, text="Schedule:").grid (row=5,column=0)
     scheduleframes = Main.ScrollableFrame(frame)
     scheduleframes.grid(row=6, column=0, sticky="nsew")
-    scheduleframes.scrollable_frame.grid_rowconfigure(0, weight=1)
-    scheduleframes.scrollable_frame.grid_columnconfigure(0, weight=1)
+    scheduleframes.grid_rowconfigure(0, weight=1)
+    scheduleframes.grid_columnconfigure(0, weight=1)
     currenttime = starttimes[widget.date.weekday()]
     for idx,i in enumerate(timeline):
-        tempframe = ttk.Frame(scheduleframes.scrollable_frame)
+        tempframe = ttk.Frame(scheduleframes)
         tempframe.grid(row=idx, column=0, padx = 10, pady=5, sticky="ew")
         tk.Label(tempframe,text=str(math.floor(currenttime/60)) + ":" + str(currenttime % 60)).grid(row=0, column=0, padx=5, pady=5, sticky="ew")
         currenttime += i[1]

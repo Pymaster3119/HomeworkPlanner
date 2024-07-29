@@ -10,7 +10,7 @@ name = "View Assignments and Commitments"
 
 class AssignmentWidget():
     def __init__(self, assignment, idx, mainframe, root):
-        self.tempframe = Frame(mainframe.scrollable_frame)
+        self.tempframe = Frame(mainframe)
         self.tempframe.grid(row=idx, column=0, padx = 10, pady=5, sticky="ew")
         self.namevar = StringVar(root, assignment.name)
         self.startdatevar = StringVar(root, assignment.startdate)
@@ -32,7 +32,7 @@ class AssignmentWidget():
     
 class CommitmentWidget():
     def __init__(self, commitment, idx, mainframe, root):
-        self.tempframe = Frame(mainframe.scrollable_frame)
+        self.tempframe = Frame(mainframe)
         self.tempframe.grid(row=idx, column=0, padx = 10, pady=5, sticky="ew")
         self.namevar = StringVar(root, commitment.name)
         self.startdatevar = StringVar(root, commitment.startdate)
@@ -79,10 +79,11 @@ def createApp(root):
     with open("assignmentslist", "rb") as listfile:
         assignmentlist = pickle.load(listfile)
 
+    Label(root, text="Assignments: ").grid(row = 0, column=0)
     mainframe = Main.ScrollableFrame(root)
     mainframe.grid(row=1, column=0, sticky="nsew")
-    mainframe.scrollable_frame.grid_rowconfigure(0, weight=1)
-    mainframe.scrollable_frame.grid_columnconfigure(0, weight=1)
+    mainframe.grid_rowconfigure(0, weight=1)
+    mainframe.grid_columnconfigure(0, weight=1)
     
     for idx,i in enumerate(assignmentlist):
         assignments.append(AssignmentWidget(i, idx, mainframe, root))
@@ -91,10 +92,11 @@ def createApp(root):
     with open("commitmentslist", "rb") as listfile:
         commitmentlist = pickle.load(listfile)
 
+    Label(root, text="Commitments: ").grid(row = 2, column=0)
     mainframe = Main.ScrollableFrame(root)
     mainframe.grid(row=3, column=0, sticky="nsew")
-    mainframe.scrollable_frame.grid_rowconfigure(0, weight=1)
-    mainframe.scrollable_frame.grid_columnconfigure(0, weight=1)
+    mainframe.grid_rowconfigure(0, weight=1)
+    mainframe.grid_columnconfigure(0, weight=1)
     
     for idx,i in enumerate(commitmentlist):
         commitments.append(CommitmentWidget(i, idx, mainframe, root))

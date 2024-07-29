@@ -2,6 +2,11 @@ import datetime
 import tkinter as tk
 from tkinter import ttk
 import pickle
+import HomeworkAdder
+import CommitmentsAdder
+import AssignmentViewer
+import ConfigEditor
+import CalendarView
 
 class Assignment():
     def __init__(self, startdate, enddate, workunits, difficulty, name, subject, time, bypass = False):
@@ -96,8 +101,16 @@ def get_dates_between(date1_str, date2_str):
     all_dates = [date1 + datetime.timedelta(days=i) for i in range(delta.days + 1)]
     return all_dates
 
+def openapp(app):
+   top = tk.Toplevel(root)
+   top.title(app.name)
+   app.createApp(top) 
+
 if __name__ == "__main__":
-    assignmentlist = []
-    listname = input("What list do you want to remove?: ")
-    with open(listname, "wb") as listfile:
-        pickle.dump(assignmentlist, listfile)
+    root = tk.Tk()
+    tk.Button(root, text="Add Homework", command=lambda:openapp(HomeworkAdder)).pack()
+    tk.Button(root, text="Add Commitments", command=lambda:openapp(CommitmentsAdder)).pack()
+    tk.Button(root, text="View Assignments and Commitments", command=lambda:openapp(AssignmentViewer)).pack()
+    tk.Button(root, text="View Callendar", command=lambda:openapp(CalendarView)).pack()
+    tk.Button(root, text="Edit Configuration", command=lambda:openapp(ConfigEditor)).pack()
+    root.mainloop()

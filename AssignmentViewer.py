@@ -5,19 +5,11 @@ import pickle
 from tkinter import messagebox
 import Main
 
-root = Tk()
+name = "View Assignments and Commitments"
 
-assignmentlist = []
-with open("assignmentslist", "rb") as listfile:
-    assignmentlist = pickle.load(listfile)
-
-mainframe = Main.ScrollableFrame(root)
-mainframe.grid(row=1, column=0, sticky="nsew")
-mainframe.scrollable_frame.grid_rowconfigure(0, weight=1)
-mainframe.scrollable_frame.grid_columnconfigure(0, weight=1)
 
 class AssignmentWidget():
-    def __init__(self, assignment, idx):
+    def __init__(self, assignment, idx, mainframe, root):
         self.tempframe = Frame(mainframe.scrollable_frame)
         self.tempframe.grid(row=idx, column=0, padx = 10, pady=5, sticky="ew")
         self.namevar = StringVar(root, assignment.name)
@@ -39,18 +31,36 @@ class AssignmentWidget():
         return Main.Assignment(self.startdatevar.get(), self.enddatevar.get(), self.workvar, self.difficultyvar, self.namevar, self.subjectvar, self.timevar, bypass=True)
 
 assignments = []
+
 def deleteAssignment(assignment):
     assignments.remove(assignment)
     assignment.tempframe.destroy()
-for idx,i in enumerate(assignmentlist):
-    assignments.append(AssignmentWidget(i, idx))
 
-def save():
+def save(root):
     assignmentlist= []
     for assignment in assignments:
         assignmentlist.append(assignment.compress())
     with open("assignmentslist", "wb") as listfile:
         pickle.dump(assignmentlist, listfile)
     root.destroy()
-root.protocol("WM_DELETE_WINDOW", save)
-root.mainloop()
+
+def createApp(root):
+    assignmentlist = []
+    with open("assignmentslist", "rb") as listfile:
+        assignmentlist = pickle.load(listfile)
+
+    mainframe = Main.ScrollableFrame(root)
+    mainframe.grid(row=1, column=0, sticky="nsew")
+    mainframe.scrollable_frame.grid_rowconfigure(0, weight=1)
+    mainframe.scrollable_frame.grid_columnconfigure(0, weight=1)
+    
+    for idx,i in enumerate(assignmentlist):
+        assignments.append(AssignmentWidget(i, idx, mainframe, root))
+
+
+    root.protocol("WM_DELETE_WINDOW", lambda:save(root))
+
+if __name__ == "__main__":
+    root = Tk()
+    createApp(root)
+    root.mainloop()

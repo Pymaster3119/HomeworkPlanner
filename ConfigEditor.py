@@ -2,6 +2,8 @@ import re
 from tkinter import *
 import Main
 
+name = "Edit Configuration"
+
 def load():
     with open("config.txt", "r") as txt:
         text = txt.read()
@@ -17,7 +19,7 @@ def load():
         else:
             print("no match")
 
-def save(starttimes, workperiods, breakperiods):
+def save(starttimes, workperiods, breakperiods, root):
     starttimelist = []
     for x in starttimes:
         starttimelist.append(x.get())
@@ -26,8 +28,7 @@ def save(starttimes, workperiods, breakperiods):
         txt.write("Starttimes: " + str(starttimelist) + "\nWorkperiods: " + str(workperiods) + "\nBreakperiods: " + str(breakperiods))
     root.destroy()
 
-if __name__ == "__main__":
-    root = Tk()
+def createApp(root):
     frame = Frame(root)
     frame.pack()
     workperiods, breakperiods, starttimes = load()
@@ -43,5 +44,9 @@ if __name__ == "__main__":
         var = IntVar(frame, starttimes[idx])
         Entry(frame, textvariable=var).grid(row=3, column=idx)
         starttimevars.append(var)
-    root.protocol("WM_DELETE_WINDOW", lambda: save(starttimevars, workperiodsvar.get(), breakperiodsvar.get()))
+    root.protocol("WM_DELETE_WINDOW", lambda: save(starttimevars, workperiodsvar.get(), breakperiodsvar.get(), root))
+
+if __name__ == "__main__":
+    root = Tk()
+    createApp(root)
     root.mainloop()

@@ -38,7 +38,7 @@ class ScrollableFrame(ttk.Frame):
     def __init__(self, container, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
         
-        self.canvas = tk.Canvas(self, width = 1500)
+        self.canvas = tk.Canvas(self)
         scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
         self.scrollable_frame = ttk.Frame(self.canvas)
         
@@ -48,15 +48,14 @@ class ScrollableFrame(ttk.Frame):
                 scrollregion=self.canvas.bbox("all")
             )
         )
-        
-        self.canvas_window = self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
 
+        self.canvas_window = self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
         self.canvas.configure(yscrollcommand=scrollbar.set)
         
         self.canvas.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
 
-        self.scrollable_frame.bind("<Configure>", self._on_frame_configure)
+        self.bind("<Configure>", self._on_frame_configure)
         self.canvas.bind('<Configure>', self._on_canvas_configure)
 
     def _on_frame_configure(self, event):
@@ -64,8 +63,9 @@ class ScrollableFrame(ttk.Frame):
         self.canvas.itemconfig(self.canvas_window, width=self.scrollable_frame.winfo_reqwidth())
 
     def _on_canvas_configure(self, event):
-        if self.scrollable_frame.winfo_reqwidth() != self.canvas.winfo_width():
-            self.canvas.itemconfig(self.canvas_window, width=self.canvas.winfo_width())
+        self.canvas.itemconfig(self.canvas_window, width=self.canvas.winfo_width())
+
+    
 COLORS = [
     "#FF0000",  # Red
     "#00FF00",  # Green

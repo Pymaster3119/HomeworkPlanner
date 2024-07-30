@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Bird</title>
+    <style>
+        /* Add your styles here */
+        canvas {
+            display: block;
+            margin: auto;
+            background: #70c5ce;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="flappyCanvas" width="320" height="480"></canvas>
+    <script>
+        // JavaScript for Flappy Bird game
+        var canvas = document.getElementById("flappyCanvas");
+        var ctx = canvas.getContext("2d");
+
+        var bird = {
+            x: 50,
+            y: 150,
+            width: 20,
+            height: 20,
+            gravity: 0.6,
+            lift: -15,
+            velocity: 0,
+            draw: function() {
+                ctx.fillStyle = "#FF0";
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+            },
+            update: function() {
+                this.velocity += this.gravity;
+                this.y += this.velocity;
+                if (this.y + this.height > canvas.height) {
+                    this.y = canvas.height - this.height;
+                    this.velocity = 0;
+                }
+                if (this.y < 0) {
+                    this.y = 0;
+                    this.velocity = 0;
+                }
+            },
+            up: function() {
+                this.velocity += this.lift;
+            }
+        };
+
+        function setup() {
+            document.addEventListener("keydown", function(e) {
+                if (e.code === "Space") {
+                    bird.up();
+                }
+            });
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            bird.draw();
+        }
+
+        function update() {
+            bird.update();
+        }
+
+        function loop() {
+            draw();
+            update();
+            requestAnimationFrame(loop);
+        }
+
+        setup();
+        loop();
+    </script>
+</body>
+</html>

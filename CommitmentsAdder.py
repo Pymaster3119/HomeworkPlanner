@@ -9,7 +9,7 @@ name = "Add Commitments"
 
 #Create Commitment
 def saveCommitments():
-    commitmentlist = []
+    commitmentlist = []  
     with open("commitmentslist", "rb") as listfile:
         commitmentlist = pickle.load(listfile)
     commitmentlist.append(Main.Commitment(startdate, enddate, starttime, duration, name, reason, weekdayvars))

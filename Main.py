@@ -78,6 +78,10 @@ def openapp(app):
    top.title(app.name)
    app.createApp(top) 
 
+def remind():
+    print("Hi")
+    root.after(1, remind)
+
 if __name__ == "__main__":
     root = tk.Tk()
     tk.Button(root, text="Add Homework", command=lambda:openapp(HomeworkAdder)).pack()
@@ -85,4 +89,5 @@ if __name__ == "__main__":
     tk.Button(root, text="View Assignments and Commitments", command=lambda:openapp(AssignmentViewer)).pack()
     tk.Button(root, text="View Callendar", command=lambda:openapp(CalendarView)).pack()
     tk.Button(root, text="Edit Configuration", command=lambda:openapp(ConfigEditor)).pack()
+    root.after(1, remind)
     root.mainloop()

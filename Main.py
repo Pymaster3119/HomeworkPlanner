@@ -8,6 +8,7 @@ import AssignmentViewer
 import ConfigEditor
 import CalendarView
 import tkscrolledframe
+import DetailedView
 
 class Assignment():
     def __init__(self, startdate, enddate, workunits, difficulty, name, subject, time, bypass = False):
@@ -79,7 +80,25 @@ def openapp(app):
    app.createApp(top) 
 
 def remind():
-    print("Hi")
+    now = datetime.datetime.now()
+    #Load assignments and commitments
+    assignmentlist, commitmentlist = CalendarView.load()
+    assignments = []
+    for assignment in assignmentlist:
+        for date in get_dates_between(assignment.startdate, assignment.enddate):
+            if date.year == now.year and date.month == now.month and date.day == now.day:
+                assignments.append(assignment)
+    commitments = []
+    for commitment in commitmentlist:
+            for date in get_dates_between(commitment.startdate, commitment.enddate):
+                if date.year == now.year and date.month == now.month and commitment.days[now.weekday()]:
+                    commitments.append(commitment)
+    
+    #Gather Schedule
+    schedule = DetailedView.createSchedule(assignments=assignments, commitments=commitments)
+    for timeframe in schedule:
+        if timeframe[0] - now.minute <= 1:
+            print("Notify!")
     root.after(1, remind)
 
 if __name__ == "__main__":

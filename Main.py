@@ -9,6 +9,8 @@ import ConfigEditor
 import CalendarView
 import tkscrolledframe
 import DetailedView
+import pync
+import pygame
 
 class Assignment():
     def __init__(self, startdate, enddate, workunits, difficulty, name, subject, time, bypass = False):
@@ -79,6 +81,10 @@ def openapp(app):
    top.title(app.name)
    app.createApp(top) 
 
+def playSound(sound):
+    pygame.mixer.music.load(os.getcwd() + "/" + sound)
+    pygame.mixer.music.play(loops=0)
+
 def remind():
     now = datetime.datetime.now()
     #Load assignments and commitments
@@ -95,11 +101,16 @@ def remind():
                     commitments.append(commitment)
     
     #Gather Schedule
-    schedule = DetailedView.createSchedule(assignments=assignments, commitments=commitments)
-    for timeframe in schedule:
-        if timeframe[0] - now.minute <= 1:
-            print("Notify!")
-    root.after(1, remind)
+    timeline = DetailedView.createSchedule(assignments=assignments, commitments=commitments)
+    workperiods, breakperiods, starttimes = ConfigEditor.load()
+    currenttime = starttimes[now.weekday()]
+    for idx,i in enumerate(timeline):
+        if currenttime - now.minute <= 1:
+            playSound("restartSession.mp3")
+            pync.notify("Check your schedule and change what you are doing", title = "AssignmentViewer")
+        currenttime += i[1]
+    #pync.notify("Start " + "NOW!")
+    root.after(100, remind)
 
 if __name__ == "__main__":
     root = tk.Tk()
